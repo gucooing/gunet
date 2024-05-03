@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"strconv"
 	"time"
@@ -27,9 +28,10 @@ func main() {
 	}
 	defer conn.Close()
 
-	bin := randStringBytes(1024)
+	bin := randStringBytes(1024 * 1024)
 
-	for i := 0; i < 50000; i++ {
+	time1 := time.Now().UnixMilli()
+	for i := 0; i < 1024; i++ {
 		var err error
 		data := append([]byte(strconv.Itoa(i)), bin...)
 		_, err = conn.Write(data)
@@ -38,5 +40,7 @@ func main() {
 			return
 		}
 	}
+	time2 := time.Now().UnixMilli()
+	log.Println(time2-time1, "ms")
 	time.Sleep(time.Second)
 }

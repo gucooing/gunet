@@ -90,9 +90,6 @@ func (tlc *TcpConn) dwtme() {
 	if packetLen > uint32(len(tlc.tme)) {
 		return
 	}
-	if packetLen > PacketMaxLen {
-		return
-	}
 	mt := msgDecode(tlc.tme[:packetLen])
 	if mt == nil {
 		return
