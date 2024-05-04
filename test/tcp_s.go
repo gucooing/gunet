@@ -20,20 +20,27 @@ func main() {
 				log.Println(err)
 				return
 			}
-			go read(conn)
+			go readS(conn)
 		}
 	}()
 	select {}
 }
 
-func read(conn *gunet.TcpConn) {
-	defer conn.Close()
+func readS(conn *gunet.TcpConn) {
 	for {
 		bin, err := conn.Read()
 		if err != nil {
 			log.Println(err)
 			return
 		}
-		log.Println(string(bin))
+		go writeS(conn, bin)
+	}
+}
+
+func writeS(conn *gunet.TcpConn, data []byte) {
+	_, err := conn.Write(data)
+	if err != nil {
+		log.Println(err)
+		return
 	}
 }
