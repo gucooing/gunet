@@ -53,9 +53,6 @@ func (tlc *TcpConn) Read() ([]byte, error) {
 			tlc.reader.Reset(tlc.conn)
 			continue
 		}
-		if uint32(tlc.reader.Buffered()) < packetLen { // 太小了再等等
-			continue
-		}
 		// 读到了解包消息数据
 		pack := make([]byte, packetLen)
 		_, err = tlc.reader.Read(pack)
