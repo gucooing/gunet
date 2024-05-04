@@ -92,3 +92,7 @@ func (tlc *TcpConn) Close() error {
 	}
 	return tlc.conn.Close()
 }
+
+func (tlc *TcpConn) RemoteAddr() net.Addr {
+	return tlc.conn.RemoteAddr()
+}
