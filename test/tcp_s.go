@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"gunet"
+	"github.com/gucooing/gunet"
 )
 
 func main() {

@@ -6,7 +6,7 @@ import (
 	"math/rand"
 	"time"
 
-	"gunet"
+	"github.com/gucooing/gunet"
 )
 
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
