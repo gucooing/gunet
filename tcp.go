@@ -23,12 +23,21 @@ func NewTcpS(address string) (*TcpListener, error) {
 	return l, err
 }
 
+func (l *TcpListener) ok() bool { return l != nil }
+
 func (l *TcpListener) Accept() (*TcpConn, error) {
 	tlc := new(TcpConn)
 	conn, err := l.listener.Accept()
 	tlc.conn = conn
 	tlc.reader = bufio.NewReaderSize(tlc.conn, PacketMaxLen)
 	return tlc, err
+}
+
+func (l *TcpListener) Close() error {
+	if !l.ok() {
+		return syscall.EINVAL
+	}
+	return l.listener.Close()
 }
 
 func (tlc *TcpConn) ok() bool { return tlc != nil }
