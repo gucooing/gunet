@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
-	"time"
+	"strconv"
 
 	"github.com/gucooing/gunet"
 )
@@ -53,31 +53,37 @@ var i int
 func readC(conn *gunet.TcpConn) {
 	bin := randStringBytes(1024)
 	go writeC(conn, bin)
-	/*
-		for {
-			_, err := conn.Read()
-			if err != nil {
-				log.Println(err)
-				return
-			}
-			data := append([]byte(strconv.Itoa(i)), bin...)
-			i++
-			log.Println(i)
-		go writeC(conn, data)
-			time.Sleep(1 * time.Millisecond)
+	for {
+		_, err := conn.Read()
+		if err != nil {
+			log.Println(err)
+			return
 		}
-	*/
+		data := append([]byte(strconv.Itoa(i)), bin...)
+		i++
+		log.Println(i)
+		go writeC(conn, data)
+		// time.Sleep(1 * time.Millisecond)
+	}
 }
 
 func writeC(conn *gunet.TcpConn, data []byte) {
+	_, err := conn.Write(data)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+}
+
+func forWriteC(conn *gunet.TcpConn, data []byte) {
 	for {
 		i++
-		log.Println(i)
+		go log.Println(i)
 		_, err := conn.Write(data)
 		if err != nil {
 			log.Println(err)
 			return
 		}
-		time.Sleep(1 * time.Millisecond)
+		// time.Sleep(20 * time.Microsecond)
 	}
 }

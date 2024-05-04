@@ -34,26 +34,28 @@ func (l *TcpListener) Accept() (*TcpConn, error) {
 func (tlc *TcpConn) ok() bool { return tlc != nil }
 
 func (tlc *TcpConn) Read() ([]byte, error) {
-	lengthByte, err := tlc.reader.Peek(4) // 读取前4个字节的数据
-	if err != nil {
-		return nil, err
+	for {
+		lengthByte, err := tlc.reader.Peek(4) // 读取前4个字节的数据
+		if err != nil {
+			return nil, err
+		}
+		packetLen := binary.BigEndian.Uint32(lengthByte)
+		if packetLen > PacketMaxLen { // 太大了清空
+			tlc.reader.Reset(tlc.conn)
+			continue
+		}
+		if uint32(tlc.reader.Buffered()) < packetLen { // 太小了再等等
+			continue
+		}
+		// 读到了解包消息数据
+		pack := make([]byte, packetLen)
+		_, err = tlc.reader.Read(pack)
+		if err != nil {
+			return nil, err
+		}
+		mt := msgDecode(pack)
+		return mt.data, nil
 	}
-	packetLen := binary.BigEndian.Uint32(lengthByte)
-	if packetLen > PacketMaxLen { // 太大了清空
-		tlc.reader.Reset(tlc.conn)
-		tlc.Read()
-	}
-	if uint32(tlc.reader.Buffered()) < packetLen { // 太小了再等等
-		tlc.Read()
-	}
-	// 读到了解包消息数据
-	pack := make([]byte, packetLen)
-	_, err = tlc.reader.Read(pack)
-	if err != nil {
-		return nil, err
-	}
-	mt := msgDecode(pack)
-	return mt.data, nil
 }
 
 func NewTcpC(address string) (*TcpConn, error) {
