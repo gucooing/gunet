@@ -45,12 +45,16 @@ func (tlc *TcpConn) ok() bool { return tlc != nil }
 
 func (tlc *TcpConn) Read() ([]byte, error) {
 	for {
-		lengthByte, err := tlc.reader.Peek(4) // 读取前4个字节的数据
+		lengthByte, err := tlc.reader.Peek(8) // 读取前8个字节的数据
 		if err != nil {
 			return nil, err
 		}
-		packetLen := binary.BigEndian.Uint32(lengthByte)
-		if packetLen > PacketMaxLen { // 太大了清空
+		if binary.BigEndian.Uint32(lengthByte[:4]) != 0x9d74c714 {
+			tlc.reader.Reset(tlc.conn)
+			continue
+		}
+		packetLen := binary.BigEndian.Uint32(lengthByte[4:8])
+		if packetLen > PacketMaxLen {
 			tlc.reader.Reset(tlc.conn)
 			continue
 		}
@@ -61,6 +65,9 @@ func (tlc *TcpConn) Read() ([]byte, error) {
 			return nil, err
 		}
 		mt := msgDecode(pack)
+		if mt == nil {
+			continue
+		}
 		return mt.data, nil
 	}
 }

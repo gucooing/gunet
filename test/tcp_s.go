@@ -8,7 +8,7 @@ import (
 
 func main() {
 	log.SetFlags(log.Lshortfile | log.LstdFlags)
-	listener, err := gunet.NewTcpS("10.0.0.16:12996")
+	listener, err := gunet.NewTcpS("127.0.0.1:12996")
 	if err != nil {
 		log.Println(err)
 		return

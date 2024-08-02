@@ -20,7 +20,7 @@ func randStringBytes(n int) []byte {
 }
 
 func main() {
-	conn, err := gunet.NewTcpC("10.0.0.16:12996")
+	conn, err := gunet.NewTcpC("127.0.0.1:12996")
 	if err != nil {
 		fmt.Println(err)
 		return
