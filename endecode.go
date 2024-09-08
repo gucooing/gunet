@@ -65,6 +65,7 @@ func msgDecode(data []byte) *msg {
 	// 数据
 	// proto数据
 	protoData := data[8 : int(protoLen)-4]
-	copy(newMsg.data,protoData)
+	newMsg.data = make([]byte, protoLen)
+	copy(newMsg.data, protoData)
 	return newMsg
 }
